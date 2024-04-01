@@ -2,7 +2,7 @@ import java.util.*;
 
 class Persona {
     private String nombre;
-    private String DNI;
+    private String id;
     private String telefono;
     private String direccion;
     private String email;
@@ -157,15 +157,106 @@ enum EstadoEquipo {
     DISPONIBLE, EN_USO, EN_MANTENIMIENTO
 }
 
+class GestorPacientes {
+    private Map<String, Paciente> registroPacientes;
+
+    public GestorPacientes() {
+        this.registroPacientes = new HashMap<>();
+    }
+
+    public void registrarPaciente(Paciente paciente) {
+        if (!registroPacientes.containsKey(paciente.getId())) {
+            registroPacientes.put(paciente.getId(), paciente);
+            System.out.println("Paciente registrado con éxito: " + paciente.getNombre());
+        } else {
+            System.out.println("El paciente ya está registrado.");
+        }
+    }
+
+    public Paciente buscarPacientePorId(String id) {
+        return registroPacientes.get(id);
+    }
+
+    public void actualizarDatosPaciente(String id, Paciente nuevosDatos) {
+        if (registroPacientes.containsKey(id)) {
+            registroPacientes.put(id, nuevosDatos);
+            System.out.println("Datos del paciente actualizados con éxito.");
+        } else {
+            System.out.println("No se encontró el paciente con ID: " + id);
+        }
+    }
+
+    public void darDeAltaPaciente(String id) {
+        if (registroPacientes.containsKey(id)) {
+            registroPacientes.remove(id);
+            System.out.println("Paciente dado de alta y eliminado del sistema.");
+        } else {
+            System.out.println("No se encontró el paciente con ID: " + id);
+        }
+    }
+}
+
+class GestorCitas {
+    private List<CitaMedica> agendaCitas;
+
+    public GestorCitas() {
+        this.agendaCitas = new LinkedList<>();
+    }
+
+    public void programarCita(CitaMedica cita) {
+        agendaCitas.add(cita);
+        System.out.println("Cita programada para el paciente: " + cita.getPaciente().getNombre());
+    }
+
+    public List<CitaMedica> obtenerCitasDelDia(Date fecha) {
+        List<CitaMedica> citasDelDia = new ArrayList<>();
+        for (CitaMedica cita : agendaCitas) {
+            if (mismoDia(cita.getFechaHora(), fecha)) {
+                citasDelDia.add(cita);
+            }
+        }
+        return citasDelDia;
+    }
+
+    private boolean mismoDia(Date fecha1, Date fecha2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(fecha1);
+        cal2.setTime(fecha2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+               cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+               cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public void cancelarCita(CitaMedica cita) {
+        if (agendaCitas.remove(cita)) {
+            System.out.println("Cita cancelada para el paciente: " + cita.getPaciente().getNombre());
+        } else {
+            System.out.println("La cita no se encontró en el sistema.");
+        }
+    }
+}
+
 public class SistemaGestionHospitalaria {
     private List<Clinica> clinicas;
     private Map<String, Paciente> registroPacientes;
     private Map<String, Empleado> registroEmpleados;
+    private GestorPacientes gestorPacientes;
+    private GestorCitas gestorCitas;
 
-    // Constructor y métodos para manejar el sistema
-    // ...
+    public SistemaGestionHospitalaria() {
+        this.clinicas = new ArrayList<>();
+        this.registroPacientes = new HashMap<>();
+        this.registroEmpleados = new HashMap<>();
+        this.gestorPacientes = new GestorPacientes();
+        this.gestorCitas = new GestorCitas();
+    }
+
+    // Métodos para manejar el sistema: agregar clínicas, registrar pacientes, etc.
+    // Métodos para interfaz de usuario para permitir la interacción con el sistema
 
     public static void main(String[] args) {
-        // Inicializar y gestionar el sistema
+        SistemaGestionHospitalaria sistema = new SistemaGestionHospitalaria();
+        // Código para interactuar con el sistema
     }
 }
